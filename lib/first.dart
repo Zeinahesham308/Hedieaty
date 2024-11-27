@@ -11,7 +11,7 @@ class FirstScreen extends StatelessWidget {
           gradient: LinearGradient(
             colors: [
               Color(0xFFFFC107), // Amber
-              Color(0xFF80D8FF), // Light Blue
+              Color(0xFF2EC2D2), // Light Blue
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -50,7 +50,7 @@ class FirstScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
+                  backgroundColor: Colors.deepOrangeAccent,
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
