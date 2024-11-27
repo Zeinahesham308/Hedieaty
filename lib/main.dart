@@ -3,7 +3,7 @@ import 'first.dart'; // Import the FirstScreen from first.dart
 import 'login.dart';
 import 'signup.dart';
 import 'home.dart';
-import 'home2.dart';
+
 void main() {
   runApp(const HedeieatyApp());
 }
