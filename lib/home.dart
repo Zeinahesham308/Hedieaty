@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'bottom_nav_bar.dart';
+import 'FriendsEventList.dart'; // Replace with the actual import path
+import 'EventsList.dart'; // Replace with the correct import for the Events Page
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -35,11 +38,18 @@ class HomeScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min, // Prevent overflow
                 children: const [
                   Text(
-                    'Welcome! Zeina',
+                    'Welcome, Zeina!',
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    'Explore and manage your events',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black54,
                     ),
                   ),
                 ],
@@ -108,42 +118,55 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                itemCount: 10, // Number of items in the list
+                itemCount: 10, // Number of friends/events in the list
                 itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8), // Space between items
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFFFC107),
-                          Color(0xFF2EC2D2),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
+                  return GestureDetector(
+                    onTap: () {
+                      // Navigate to friend's event list page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FriendsEventListPage(
+                            friendName: 'Friend ${index + 1}', // Pass friend's name
+                          ),
                         ),
-                      ],
-                    ),
-                    child: ListTile(
-                      leading: const CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.person, color: Colors.grey),
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFFFFC107),
+                            Color(0xFF2EC2D2),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
-                      title: const Text(
-                        'My Friend 1',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      child: ListTile(
+                        leading: const CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: Icon(Icons.person, color: Colors.grey),
+                        ),
+                        title: Text(
+                          'Friend ${index + 1}', // Dynamic friend name
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: const Text('Upcoming Events: 1'),
+                        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black),
+                        contentPadding: const EdgeInsets.all(0),
                       ),
-                      subtitle: const Text('Upcoming Events: 1'),
-                      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black),
-                      contentPadding: const EdgeInsets.all(0),
                     ),
                   );
                 },
@@ -152,7 +175,7 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(),
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 0),
     );
   }
 }
@@ -163,7 +186,9 @@ class CreateEventButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        // Create event logic
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
@@ -181,53 +206,6 @@ class CreateEventButton extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFFFC107),
-            Color(0xFF80D8FF),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '',
-          ),
-        ],
       ),
     );
   }
