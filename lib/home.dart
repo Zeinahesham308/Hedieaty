@@ -2,9 +2,34 @@ import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
 import 'FriendsEventList.dart'; // Replace with the actual import path
 import 'EventsList.dart'; // Replace with the correct import for the Events Page
+import 'controllers/home_screen_controller.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  final String userId;
+
+  const HomeScreen({Key? key, required this.userId}) : super(key: key);
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+ final HomeScreenController _controller = HomeScreenController();
+  String? welcomeName;
+
+  @override
+  void initState() {
+    super.initState();
+    HomeScreenController.setUserId(widget.userId); // Set the user ID in the controller
+    _fetchWelcomeName(); // Fetch the welcome name when the screen is initialized
+  }
+
+  Future<void> _fetchWelcomeName() async {
+    String? name = await _controller.getWelcomeName();
+    setState(() {
+      welcomeName = name; // Update the state with the fetched name
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +37,7 @@ class HomeScreen extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
+          automaticallyImplyLeading: false,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -36,16 +62,16 @@ class HomeScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min, // Prevent overflow
-                children: const [
+                children: [
                   Text(
-                    'Welcome, Zeina!',
-                    style: TextStyle(
+                    welcomeName != null ? 'Welcome, $welcomeName!' : 'Welcome, ...',
+                    style: const TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
-                  Text(
+                  const Text(
                     'Explore and manage your events',
                     style: TextStyle(
                       fontSize: 14,
@@ -175,7 +201,10 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: 0,
+        userId: widget.userId, // Pass the userId here
+      ),
     );
   }
 }

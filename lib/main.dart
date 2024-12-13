@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
-import 'first.dart'; // Import the FirstScreen from first.dart
+import 'package:firebase_core/firebase_core.dart';
+import 'services/myDatabase.dart';
+import 'first.dart';
 import 'login.dart';
 import 'signup.dart';
 import 'home.dart';
-import 'Profile.dart';
-import 'ProfileDetails.dart';
-import 'ChangePassword.dart';
-import 'EventsList.dart';
-import 'FriendsGiftList.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  myDatabaseClass database = myDatabaseClass();
+
+  // Drop the database
+  await database.reseting();
+
+  // Reinitialize the database
+  await database.mydbcheck(); // Ensure database is initialized
   runApp(const HedeieatyApp());
 }
 
@@ -19,8 +25,23 @@ class HedeieatyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const HomeScreen(), // Start with FirstScreen
-      debugShowCheckedModeBanner: false,
+      title: 'Hedieaty',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      initialRoute: '/',
+      routes: {
+        '/': (context) =>  FirstScreen(),
+        '/login': (context) => LoginScreen(), // Define LoginScreen
+        '/signup': (context) => SignUpScreen(), // Define SignUpScreen
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/HomeScreen') {
+          final args = settings.arguments as String; // Expecting userId as a String
+          return MaterialPageRoute(
+            builder: (context) => HomeScreen(userId: args),
+          );
+        }
+        return null;
+      },
     );
   }
 }

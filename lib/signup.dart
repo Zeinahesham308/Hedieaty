@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'controllers/signup_controller.dart';
 
 class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  final SignUpController _controller = SignUpController();
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+
+  SignUpScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +31,6 @@ class SignUpScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 80),
@@ -38,26 +45,27 @@ class SignUpScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 40),
-                const _InputField(label: 'Name', hintText: 'example123'),
+                _buildTextField('Name', _nameController),
                 const SizedBox(height: 15),
-                const _InputField(label: 'Username', hintText: 'example123'),
+                _buildTextField('Email', _emailController),
                 const SizedBox(height: 15),
-                const _InputField(label: 'Email', hintText: 'example@email.com'),
+                _buildTextField('PhoneNumber', _phoneNumberController),
                 const SizedBox(height: 15),
-                const _InputField(
-                  label: 'Password',
-                  hintText: '****************',
-                  isPassword: true,
-                ),
-                const SizedBox(height: 15),
-                const _InputField(
-                  label: 'Confirm Password',
-                  hintText: '****************',
-                  isPassword: true,
-                ),
+                _buildTextField('Password', _passwordController, isPassword: true),
                 const SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    // Call the controller to handle signup
+                    _controller.signupUser(
+                      context,
+                      _nameController.text.trim(),
+                      _emailController.text.trim(),
+                      _passwordController.text.trim(),
+                      _phoneNumberController.text.trim(),
+                    );
+
+
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.lightBlueAccent,
                     minimumSize: const Size(double.infinity, 50),
@@ -79,7 +87,7 @@ class SignUpScreen extends StatelessWidget {
                       style: TextStyle(color: Colors.white),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () => _controller.goLogin(context), // Navigate back to Login
                       child: const Text(
                         'Log in',
                         style: TextStyle(
@@ -98,22 +106,9 @@ class SignUpScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-class _InputField extends StatelessWidget {
-  final String label;
-  final String hintText;
-  final bool isPassword;
-
-  const _InputField({
-    Key? key,
-    required this.label,
-    required this.hintText,
-    this.isPassword = false,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      {bool isPassword = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -127,9 +122,10 @@ class _InputField extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         TextField(
+          controller: controller,
           obscureText: isPassword,
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: label,
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(

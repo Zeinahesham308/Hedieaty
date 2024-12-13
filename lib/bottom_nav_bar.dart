@@ -4,18 +4,21 @@ import 'MyPledgedGifts.dart';
 import 'EventsList.dart';
 import 'MyNotifications.dart';
 import 'Profile.dart';
+//import 'controllers/home_screen_controller.dart';
+import 'home.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
+  final String userId;
 
-  const BottomNavBar({Key? key, required this.selectedIndex}) : super(key: key);
+  const BottomNavBar({Key? key, required this.selectedIndex, required this.userId}) : super(key: key);
 
   void _navigateToPage(BuildContext context, int index) {
     switch (index) {
       case 0:
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) =>  HomeScreen(userId: userId)),
               (route) => false, // Clear navigation stack
         );
         break;

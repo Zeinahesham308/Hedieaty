@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'controllers/first_screen_controller.dart';
 
 class FirstScreen extends StatelessWidget {
-  const FirstScreen({Key? key}) : super(key: key);
+  final FirstScreenController _controller = FirstScreenController();
+
+  FirstScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +51,7 @@ class FirstScreen extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () => _controller.navigateToLogin(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepOrangeAccent,
                   minimumSize: const Size(double.infinity, 50),
@@ -63,7 +66,7 @@ class FirstScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () => _controller.navigateToSignUp(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.lightBlueAccent,
                   minimumSize: const Size(double.infinity, 50),

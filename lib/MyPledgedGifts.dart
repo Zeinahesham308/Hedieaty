@@ -91,7 +91,7 @@ class _MyPledgedGiftsPageState extends State<MyPledgedGiftsPage> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 1),
+    //  bottomNavigationBar: const BottomNavBar(selectedIndex: 1),
     );
   }
 }

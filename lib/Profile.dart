@@ -103,7 +103,7 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 4), // Highlighting Profile
+     // bottomNavigationBar: const BottomNavBar(selectedIndex: 4), // Highlighting Profile
     );
   }
 }

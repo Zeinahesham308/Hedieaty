@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-
+import 'controllers/login_controller.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  final LoginController _controller = LoginController(); // Instantiate the controller
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  LoginScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +25,15 @@ class LoginScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
-            //mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 80),
+              const SizedBox(height: 40),
+              // Back Button
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => _controller.goBack(context),
+              ),
+              const SizedBox(height: 40),
               const Center(
                 child: Text(
                   'Log In',
@@ -46,6 +55,7 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               TextField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   hintText: 'example@email.com',
                   filled: true,
@@ -67,6 +77,7 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               TextField(
+                controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: '******************',
@@ -82,7 +93,9 @@ class LoginScreen extends StatelessWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    // Add logic to handle password reset
+                  },
                   child: const Text(
                     'Forget password?',
                     style: TextStyle(color: Colors.white),
@@ -91,7 +104,14 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  // Call the loginUser method
+                  _controller.loginUser(
+                    context,
+                    _emailController.text.trim(),
+                    _passwordController.text.trim(),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepOrangeAccent,
                   minimumSize: const Size(double.infinity, 50),
@@ -113,7 +133,7 @@ class LoginScreen extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () => _controller.goSignUp(context),
                     child: const Text(
                       'Signup',
                       style: TextStyle(

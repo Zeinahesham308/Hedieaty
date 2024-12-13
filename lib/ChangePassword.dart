@@ -79,7 +79,7 @@ class ChangePasswordScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 4), // Keep bottom nav bar
+     // bottomNavigationBar: const BottomNavBar(selectedIndex: 4), // Keep bottom nav bar
     );
   }
 }

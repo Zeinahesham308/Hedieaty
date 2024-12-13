@@ -77,7 +77,7 @@ class _MyNotificationsPageState extends State<MyNotificationsPage> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 3),
+      //bottomNavigationBar: const BottomNavBar(selectedIndex: 3),
     );
   }
 }

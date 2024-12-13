@@ -104,7 +104,7 @@ class EventsPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
+    //  bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
     );
   }
 }
