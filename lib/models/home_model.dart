@@ -1,4 +1,6 @@
 import '../services/myDatabase.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class HomeModel {
   final myDatabaseClass _localDb = myDatabaseClass();
 
@@ -19,9 +21,39 @@ class HomeModel {
       return null;
     }
   }
-  remoteFetchFriendList()
-  {
 
+
+  Future<List<Map<String, dynamic>>> fetchFriends(String userId) async {
+    List<Map<String, dynamic>> friendsList = [];
+
+    // Step 1: Get friends for the logged-in user
+    var friendsSnapshot = await FirebaseFirestore.instance
+        .collection('Friends')
+        .where('userId', isEqualTo: userId)
+        .get();
+
+    // Step 2: For each friendId, fetch user details from the Users table
+    for (var friendDoc in friendsSnapshot.docs) {
+      var friendData = friendDoc.data();
+      String friendId = friendData['friendId'];
+
+      var userSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(friendId)
+          .get();
+
+      if (userSnapshot.exists) {
+        var userData = userSnapshot.data()!;
+        friendsList.add({
+          'friendId': friendId,
+          'name': userData['name'], // Fetch from Users table
+          'upcomingEventsCount': 0, // Default for now
+        });
+      }
+    }
+
+    return friendsList;
   }
+
 
 }

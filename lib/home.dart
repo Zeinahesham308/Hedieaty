@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
 import 'FriendsEventList.dart'; // Replace with the actual import path
-import 'EventsList.dart'; // Replace with the correct import for the Events Page
 import 'controllers/home_screen_controller.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,14 +13,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
- final HomeScreenController _controller = HomeScreenController();
+  final HomeScreenController _controller = HomeScreenController();
   String? welcomeName;
+  List<Map<String, dynamic>> friendsList = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     HomeScreenController.setUserId(widget.userId); // Set the user ID in the controller
-    _fetchWelcomeName(); // Fetch the welcome name when the screen is initialized
+    _fetchWelcomeName(); // Fetch the welcome name
+    _fetchFriends(); // Fetch the friends list
   }
 
   Future<void> _fetchWelcomeName() async {
@@ -29,6 +31,22 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       welcomeName = name; // Update the state with the fetched name
     });
+  }
+
+  Future<void> _fetchFriends() async {
+    try {
+      List<Map<String, dynamic>> fetchedFriends =
+      await _controller.fetchFriendsFromFriendsModel(widget.userId);
+      setState(() {
+        friendsList = fetchedFriends;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching friends: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -61,10 +79,12 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min, // Prevent overflow
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    welcomeName != null ? 'Welcome, $welcomeName!' : 'Welcome, ...',
+                    welcomeName != null
+                        ? 'Welcome, $welcomeName!'
+                        : 'Welcome, ...',
                     style: const TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -83,7 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.more_vert, color: Colors.black),
-                onPressed: () {},
+                onPressed: () {
+
+                },
                 constraints: const BoxConstraints(
                   minWidth: 40,
                   minHeight: 40,
@@ -97,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const CreateEventButton(),
+            const CreateEventButton(), // Create Event/List Button
             const SizedBox(height: 20),
             Row(
               children: [
@@ -129,6 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 GestureDetector(
                   onTap: () {
                     // Add friend logic
+                    print("Add friend logic");
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),
@@ -142,18 +165,29 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            Expanded(
+            isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : friendsList.isEmpty
+                ? const Center(
+              child: Text(
+                'You have no friends yet',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
+            )
+                : Expanded(
               child: ListView.builder(
-                itemCount: 10, // Number of friends/events in the list
+                itemCount: friendsList.length,
                 itemBuilder: (context, index) {
+                  var friend = friendsList[index];
                   return GestureDetector(
                     onTap: () {
-                      // Navigate to friend's event list page
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => FriendsEventListPage(
-                            friendName: 'Friend ${index + 1}', // Pass friend's name
+                            //friendId: friend['friendId'],
+                            friendName: friend['name'],
+                           // userId: widget.userId,
                           ),
                         ),
                       );
@@ -186,11 +220,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Icon(Icons.person, color: Colors.grey),
                         ),
                         title: Text(
-                          'Friend ${index + 1}', // Dynamic friend name
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          friend['name'],
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold),
                         ),
-                        subtitle: const Text('Upcoming Events: 1'),
-                        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black),
+                        subtitle:
+                        const Text('Upcoming Events: 0'),
+                        trailing: const Icon(Icons.arrow_forward_ios,
+                            color: Colors.black),
                         contentPadding: const EdgeInsets.all(0),
                       ),
                     ),
@@ -203,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: BottomNavBar(
         selectedIndex: 0,
-        userId: widget.userId, // Pass the userId here
+        userId: widget.userId,
       ),
     );
   }
@@ -216,7 +253,8 @@ class CreateEventButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Create event logic
+        // Logic for creating an event
+        print("Create event logic");
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
