@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
 
 class ProfileDetailsScreen extends StatelessWidget {
-  const ProfileDetailsScreen({Key? key}) : super(key: key);
+  final String userId;
+  const ProfileDetailsScreen({Key? key, required this.userId}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +137,10 @@ class ProfileDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 4), // Profile highlighted
+        bottomNavigationBar: BottomNavBar(
+          selectedIndex: 4,
+          userId: userId,
+        )
     );
   }
 }

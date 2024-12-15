@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
 import 'FriendsEventList.dart'; // Replace with the actual import path
 import 'controllers/home_screen_controller.dart';
+import 'views/AddFriend.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userId;
@@ -150,7 +151,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(width: 10),
                 GestureDetector(
                   onTap: () {
-                    // Add friend logic
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddFriendPage(userId: widget.userId),
+                      ),
+                    );
                     print("Add friend logic");
                   },
                   child: Container(

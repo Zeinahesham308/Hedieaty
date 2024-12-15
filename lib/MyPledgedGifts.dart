@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
 
 class MyPledgedGiftsPage extends StatefulWidget {
-  const MyPledgedGiftsPage({Key? key}) : super(key: key);
+  final String userId;
+  const MyPledgedGiftsPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   _MyPledgedGiftsPageState createState() => _MyPledgedGiftsPageState();
@@ -91,8 +92,10 @@ class _MyPledgedGiftsPageState extends State<MyPledgedGiftsPage> {
           ],
         ),
       ),
-    //  bottomNavigationBar: const BottomNavBar(selectedIndex: 1),
-    );
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: 1,
+        userId: widget.userId,
+      ),    );
   }
 }
 

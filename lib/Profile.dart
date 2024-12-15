@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
+import 'ProfileDetails.dart';
+import 'MyPledgedGifts.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  final String userId;
+  const ProfileScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +72,11 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.edit,
               label: 'Update Personal Information',
               onTap: () {
-                // Navigate or handle action
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  ProfileDetailsScreen(userId: userId)),
+                      (route) => true,
+                );
               },
             ),
             ProfileOption(
@@ -90,7 +97,11 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.card_giftcard,
               label: 'My Pledged Gifts',
               onTap: () {
-                // Navigate or handle action
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  MyPledgedGiftsPage(userId: userId)),
+                      (route) => false,
+                );
               },
             ),
             ProfileOption(
@@ -103,7 +114,10 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
-     // bottomNavigationBar: const BottomNavBar(selectedIndex: 4), // Highlighting Profile
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: 4,
+        userId: userId,
+      ),
     );
   }
 }

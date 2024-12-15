@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:flutter/foundation.dart';
 
 class User {
   final String id; // Firestore UID
@@ -45,4 +48,8 @@ class User {
       'preferences': preferences,
     };
   }
+
+
+
+
 }

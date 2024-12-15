@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Friend {
   final String userId; // Foreign key for User
   final String friendId; // ID of the friend
+  String name="";
 
   Friend({
     required this.userId,
@@ -32,38 +33,5 @@ class Friend {
     };
   }
 
-
-
-  // Future<List<Map<String, dynamic>>> fetchFriends(String userId) async {
-  //   List<Map<String, dynamic>> friendsList = [];
-  //
-  //   // Step 1: Get friends for the logged-in user
-  //   var friendsSnapshot = await FirebaseFirestore.instance
-  //       .collection('Friends')
-  //       .where('userId', isEqualTo: userId)
-  //       .get();
-  //
-  //   // Step 2: For each friendId, fetch user details from the Users table
-  //   for (var friendDoc in friendsSnapshot.docs) {
-  //     var friendData = friendDoc.data();
-  //     String friendId = friendData['friendId'];
-  //
-  //     var userSnapshot = await FirebaseFirestore.instance
-  //         .collection('Users')
-  //         .doc(friendId)
-  //         .get();
-  //
-  //     if (userSnapshot.exists) {
-  //       var userData = userSnapshot.data()!;
-  //       friendsList.add({
-  //         'friendId': friendId,
-  //         'name': userData['name'], // Fetch from Users table
-  //         'upcomingEventsCount': 0, // Default for now
-  //       });
-  //     }
-  //   }
-  //
-  //   return friendsList;
-  // }
 
 }

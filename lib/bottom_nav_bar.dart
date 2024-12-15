@@ -25,7 +25,7 @@ class BottomNavBar extends StatelessWidget {
       case 1:
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const MyPledgedGiftsPage()),
+          MaterialPageRoute(builder: (context) =>  MyPledgedGiftsPage(userId: userId)),
               (route) => false,
         );
         break;
@@ -39,14 +39,14 @@ class BottomNavBar extends StatelessWidget {
       case 3:
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const MyNotificationsPage()),
+          MaterialPageRoute(builder: (context) =>  NotificationPage(userId: userId)),
               (route) => false,
         );
         break;
       case 4:
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          MaterialPageRoute(builder: (context) =>  ProfileScreen(userId: userId)),
               (route) => false,
         );
         break;

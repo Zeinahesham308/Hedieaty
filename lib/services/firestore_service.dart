@@ -17,4 +17,25 @@ class FirestoreService {
       print('FirestoreService - Error adding user: $e');
     }
   }
+  Stream<Map<String, dynamic>?> getUserByPhoneNumberStream(String phoneNumber) {
+    return FirebaseFirestore.instance
+        .collection('Users')
+        .where('phoneNumber', isEqualTo: phoneNumber)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        // Add the document ID to the returned map
+        return {
+          'id': snapshot.docs.first.id, // Add the Firestore document ID
+          ...snapshot.docs.first.data(), // Merge the document data
+        };
+      } else {
+        print('No user found for phone number: $phoneNumber');
+        return null; // Return null if no user is found
+      }
+    }).handleError((error) {
+      print('Error fetching user by phone number: $error');
+      return null; // Return null if there's an error
+    });
+  }
 }
