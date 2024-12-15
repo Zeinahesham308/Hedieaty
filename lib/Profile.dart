@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
 import 'ProfileDetails.dart';
 import 'MyPledgedGifts.dart';
+import 'controllers/logout_controller.dart';
+import 'controllers/profile_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String userId;
-  const ProfileScreen({Key? key, required this.userId}) : super(key: key);
+  final LogoutController _controller;
+  final ProfileController profileController;
+
+  ProfileScreen({Key? key, required this.userId})
+      : _controller = LogoutController(),
+        profileController = ProfileController(userId),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +25,7 @@ class ProfileScreen extends StatelessWidget {
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFFFFC107),
-                  Color(0xFF2EC2D2),
-                ],
+                colors: [Color(0xFFFFC107), Color(0xFF2EC2D2)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -29,11 +34,7 @@ class ProfileScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           title: const Text(
             'Profile',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
           ),
         ),
       ),
@@ -44,8 +45,8 @@ class ProfileScreen extends StatelessWidget {
             // Profile Avatar and Name
             Center(
               child: Column(
-                children: const [
-                  CircleAvatar(
+                children: [
+                  const CircleAvatar(
                     radius: 50,
                     backgroundColor: Color(0xFF2EC2D2),
                     child: Icon(
@@ -54,53 +55,59 @@ class ProfileScreen extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Zeina Hesham',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                  const SizedBox(height: 10),
+                  FutureBuilder<String?>(
+                    future: profileController.getUserName(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError || snapshot.data == null) {
+                        return const Text(
+                          'Name not available',
+                          style: TextStyle(fontSize: 22, color: Colors.grey),
+                        );
+                      }
+                      return Text(
+                        snapshot.data!,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 30),
-            // List of Options
             ProfileOption(
               icon: Icons.edit,
               label: 'Update Personal Information',
               onTap: () {
-                Navigator.pushAndRemoveUntil(
+                Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  ProfileDetailsScreen(userId: userId)),
-                      (route) => true,
+                  MaterialPageRoute(builder: (context) => ProfileDetailsScreen(userId: userId)),
                 );
               },
             ),
             ProfileOption(
               icon: Icons.notifications,
               label: 'Notifications',
-              onTap: () {
-                // Navigate or handle action
-              },
+              onTap: () {},
             ),
             ProfileOption(
               icon: Icons.event,
               label: 'My Events',
-              onTap: () {
-                // Navigate or handle action
-              },
+              onTap: () {},
             ),
             ProfileOption(
               icon: Icons.card_giftcard,
               label: 'My Pledged Gifts',
               onTap: () {
-                Navigator.pushAndRemoveUntil(
+                Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  MyPledgedGiftsPage(userId: userId)),
-                      (route) => false,
+                  MaterialPageRoute(builder: (context) => MyPledgedGiftsPage(userId: userId)),
                 );
               },
             ),
@@ -108,7 +115,33 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.logout,
               label: 'Logout',
               onTap: () {
-                // Navigate or handle action
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text(
+                        'Confirm Logout',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      content: const Text('Are you sure you want to logout?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the dialog
+                          },
+                          child: const Text('No', style: TextStyle(color: Colors.red)),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the dialog
+                            _controller.logoutUser(context, userId); // Call logout
+                          },
+                          child: const Text('Yes', style: TextStyle(color: Colors.green)),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
             ),
           ],
