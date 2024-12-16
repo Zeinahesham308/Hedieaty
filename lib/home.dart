@@ -3,6 +3,7 @@ import 'bottom_nav_bar.dart';
 import 'FriendsEventList.dart'; // Replace with the actual import path
 import 'controllers/home_screen_controller.dart';
 import 'views/AddFriend.dart';
+import 'views/listCreationPage.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userId;
@@ -102,16 +103,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.more_vert, color: Colors.black),
-                onPressed: () {
-
-                },
-                constraints: const BoxConstraints(
-                  minWidth: 40,
-                  minHeight: 40,
-                ),
-              ),
+              // IconButton(
+              //   icon: const Icon(Icons.more_vert, color: Colors.black),
+              //   onPressed: () {
+              //
+              //   },
+              //   constraints: const BoxConstraints(
+              //     minWidth: 40,
+              //     minHeight: 40,
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -120,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const CreateEventButton(), // Create Event/List Button
+             CreateEventButton(userId: widget.userId), // Create Event/List Button
             const SizedBox(height: 20),
             Row(
               children: [
@@ -253,14 +254,19 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class CreateEventButton extends StatelessWidget {
-  const CreateEventButton({Key? key}) : super(key: key);
+  final String userId;
+
+  const CreateEventButton({Key? key, required this.userId}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Logic for creating an event
-        print("Create event logic");
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ListCreationPage(userId: userId)));
+            print("Create event logic");
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

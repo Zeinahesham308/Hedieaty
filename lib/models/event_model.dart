@@ -1,3 +1,7 @@
+import '../services/myDatabase.dart';
+import 'package:uuid/uuid.dart';
+
+
 class Event {
   final String id; // Firestore document ID
   final String name;
@@ -14,7 +18,7 @@ class Event {
     this.description = '',
     required this.userId,
   });
-
+  final myDatabaseClass _db = myDatabaseClass();
   // Convert Firestore document to Event model
   factory Event.fromFirestore(Map<String, dynamic> data, String id) {
     return Event(
@@ -49,5 +53,35 @@ class Event {
       'description': description,
       'user_id': userId,
     };
+  }
+
+
+  Future<void> addEvent({
+    required String name,
+    required String date,
+    required String location,
+    String? description,
+    required String userId,
+  }) async {
+    //final String eventId = const Uuid().v4(); // Generate unique event ID
+
+    String sql = '''
+      INSERT INTO Events (id, name, date, location, description, user_id) 
+      VALUES ('$id', '$name', '$date', '$location', '$description', '$userId')
+    ''';
+
+    try {
+      await _db.insertData(sql);
+      print('Event added successfully!');
+    } catch (e) {
+      print('Error adding event: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getEvents(String userId) async {
+    String sql = '''
+      SELECT * FROM Events WHERE user_id = '$userId'
+    ''';
+    return await _db.readData(sql);
   }
 }

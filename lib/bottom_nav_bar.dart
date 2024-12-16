@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'MyPledgedGifts.dart';
-import 'EventsList.dart';
+import 'views/EventsList.dart';
 import 'MyNotifications.dart';
 import 'Profile.dart';
 //import 'controllers/home_screen_controller.dart';
@@ -32,7 +32,7 @@ class BottomNavBar extends StatelessWidget {
       case 2:
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const EventsPage()),
+          MaterialPageRoute(builder: (context) =>  EventListPage(userId: userId)),
               (route) => false,
         );
         break;
