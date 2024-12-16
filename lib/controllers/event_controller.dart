@@ -56,4 +56,29 @@ class EventController {
       return 'Upcoming';
     }
   }
+  /// Update an existing event
+  Future<void> updateEvent({
+    required String id,
+    required String name,
+    required String date,
+    required String location,
+    String? description,
+  }) async {
+    final Event event = Event(
+      id: id,
+      name: name,
+      date: date,
+      location: location,
+      description: description ?? '',
+      userId: '', // Not required for updating
+    );
+
+    await event.updateEvent(
+      id: id,
+      name: name,
+      date: date,
+      location: location,
+      description: description,
+    );
+  }
 }

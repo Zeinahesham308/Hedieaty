@@ -84,4 +84,24 @@ class Event {
     ''';
     return await _db.readData(sql);
   }
+  Future<void> updateEvent({
+    required String id,
+    required String name,
+    required String date,
+    required String location,
+    String? description,
+  }) async {
+    String sql = '''
+    UPDATE Events 
+    SET name = '$name', date = '$date', location = '$location', description = '${description ?? ''}' 
+    WHERE id = '$id'
+  ''';
+
+    try {
+      await _db.updateData(sql);
+      print('Event updated successfully!');
+    } catch (e) {
+      print('Error updating event: $e');
+    }
+  }
 }

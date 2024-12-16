@@ -5,7 +5,7 @@ import 'views/EventsList.dart';
 import 'MyNotifications.dart';
 import 'Profile.dart';
 //import 'controllers/home_screen_controller.dart';
-import 'home.dart';
+
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
