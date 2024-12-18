@@ -22,7 +22,7 @@ class _EventCreationPageState extends State<EventCreationPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Event name and date are required!')),
       );
-      return;
+     return;
     }
 
     await _controller.createEvent(

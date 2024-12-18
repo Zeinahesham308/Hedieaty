@@ -1,5 +1,6 @@
 import '../services/myDatabase.dart';
 import 'package:uuid/uuid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class Event {
@@ -19,6 +20,7 @@ class Event {
     required this.userId,
   });
   final myDatabaseClass _db = myDatabaseClass();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // Convert Firestore document to Event model
   factory Event.fromFirestore(Map<String, dynamic> data, String id) {
     return Event(
@@ -84,6 +86,7 @@ class Event {
     ''';
     return await _db.readData(sql);
   }
+
   Future<void> updateEvent({
     required String id,
     required String name,
@@ -102,6 +105,50 @@ class Event {
       print('Event updated successfully!');
     } catch (e) {
       print('Error updating event: $e');
+    }
+  }
+  // Fetch a specific event by its ID
+  Future<Map<String, dynamic>> getEventById(String eventId) async {
+    String sql = '''
+      SELECT * FROM Events WHERE id = '$eventId'
+    ''';
+
+    try {
+      final List<Map<String, dynamic>> result = await _db.readData(sql);
+
+      if (result.isNotEmpty) {
+        return result.first; // Return the first matching event
+      } else {
+        return {}; // Return an empty map if no event is found
+      }
+    } catch (e) {
+      print('Error fetching event by ID: $e');
+      return {};
+    }
+  }
+  Future<void> deleteEvent(String eventId) async {
+    String sql = "DELETE FROM Events WHERE id = '$eventId'";
+    try {
+      await _db.deleteData(sql);
+      print('Event deleted successfully!');
+    } catch (e) {
+      print('Error deleting event: $e');
+    }
+  }
+  // Fetch events associated with a specific userId from Firestore
+  Future<List<Event>> fetchEventsFromFirestoreByUserId(String userId) async {
+    try {
+      QuerySnapshot eventSnapshot = await _firestore
+          .collection('Events')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      return eventSnapshot.docs.map((doc) {
+        return Event.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+    } catch (e) {
+      print('Error fetching events from Firestore: $e');
+      return [];
     }
   }
 }

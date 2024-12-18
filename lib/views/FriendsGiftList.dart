@@ -1,14 +1,38 @@
 import 'package:flutter/material.dart';
-
-class FriendsGiftListPage extends StatelessWidget {
-  final String eventName; // Add this parameter
-  final String friendName;
+import '../controllers/gift_list_controller.dart';
+import 'friendGiftDetails.dart';
+class FriendsGiftListPage extends StatefulWidget {
+  final String eventName; // Event name
+  final String friendName; // Friend name
+  final String eventId; // Event ID to fetch gifts
 
   const FriendsGiftListPage({
     Key? key,
-    required this.eventName, // Mark as required
+    required this.eventName,
     required this.friendName,
+    required this.eventId,
   }) : super(key: key);
+
+  @override
+  _FriendsGiftListPageState createState() => _FriendsGiftListPageState();
+}
+
+class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
+  final GiftListController _controller = GiftListController();
+  List<Map<String, dynamic>> _gifts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchGifts();
+  }
+
+  Future<void> _fetchGifts() async {
+    final gifts = await _controller.retrieveGifts(widget.eventId);
+    setState(() {
+      _gifts = gifts;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +44,7 @@ class FriendsGiftListPage extends StatelessWidget {
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFFFFC107),
-                  Color(0xFF2EC2D2),
-                ],
+                colors: [Color(0xFFFFC107), Color(0xFF2EC2D2)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -31,7 +52,7 @@ class FriendsGiftListPage extends StatelessWidget {
           ),
           backgroundColor: Colors.transparent,
           title: Text(
-            '$friendName\'s $eventName Gifts',
+            '${widget.friendName}\'s ${widget.eventName} Gifts',
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -42,18 +63,27 @@ class FriendsGiftListPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: 5, // Number of gifts
+        child: _gifts.isEmpty
+            ? const Center(child: Text('No gifts available for this event.'))
+            : ListView.builder(
+          itemCount: _gifts.length,
           itemBuilder: (context, index) {
-            return Container(
+            final gift = _gifts[index];
+            return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FriendGiftDetailsPage(gift: gift),
+                    ),
+                  );
+                },
+            child: Container(
               margin: const EdgeInsets.symmetric(vertical: 8.0),
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFFFC107),
-                    Color(0xFF2EC2D2),
-                  ],
+                  colors: [Color(0xFFFFC107), Color(0xFF2EC2D2)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -75,7 +105,7 @@ class FriendsGiftListPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Gift ${index + 1}",
+                        gift['name'] ?? 'No Name',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -83,9 +113,9 @@ class FriendsGiftListPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 5),
-                      const Text(
-                        "Category: Toys", // Placeholder category
-                        style: TextStyle(
+                      Text(
+                        "Category: ${gift['category'] ?? 'N/A'}",
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Colors.black54,
                         ),
@@ -113,7 +143,7 @@ class FriendsGiftListPage extends StatelessWidget {
                   ),
                 ],
               ),
-            );
+            ));
           },
         ),
       ),

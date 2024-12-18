@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
-import 'FriendsEventList.dart'; // Replace with the actual import path
+import 'views/FriendsEventList.dart'; // Replace with the actual import path
 import 'controllers/home_screen_controller.dart';
+import 'controllers/friend_controller.dart';
 import 'views/AddFriend.dart';
 import 'views/listCreationPage.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userId;
+
 
   const HomeScreen({Key? key, required this.userId}) : super(key: key);
 
@@ -16,22 +18,25 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final HomeScreenController _controller = HomeScreenController();
+  final FriendController friendController = FriendController();
+
   String? welcomeName;
   List<Map<String, dynamic>> friendsList = [];
+  Map<String, int> upcomingEventsMap = {}; // Map to store upcoming events count for each friend
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    HomeScreenController.setUserId(widget.userId); // Set the user ID in the controller
-    _fetchWelcomeName(); // Fetch the welcome name
-    _fetchFriends(); // Fetch the friends list
+    HomeScreenController.setUserId(widget.userId);
+    _fetchWelcomeName();
+    _fetchFriends();
   }
 
   Future<void> _fetchWelcomeName() async {
     String? name = await _controller.getWelcomeName();
     setState(() {
-      welcomeName = name; // Update the state with the fetched name
+      welcomeName = name;
     });
   }
 
@@ -39,6 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       List<Map<String, dynamic>> fetchedFriends =
       await _controller.fetchFriendsFromFriendsModel(widget.userId);
+
+      // Fetch upcoming events for each friend
+      for (var friend in fetchedFriends) {
+        int count = await friendController.getUpcomingEventsCount(friend['friendId']);
+        setState(() {
+          upcomingEventsMap[friend['friendId']] = count;
+        });
+      }
+
       setState(() {
         friendsList = fetchedFriends;
         isLoading = false;
@@ -61,10 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFFFFC107),
-                  Color(0xFF2EC2D2),
-                ],
+                colors: [Color(0xFFFFC107), Color(0xFF2EC2D2)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -84,35 +95,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    welcomeName != null
-                        ? 'Welcome, $welcomeName!'
-                        : 'Welcome, ...',
-                    style: const TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                    welcomeName != null ? 'Welcome, $welcomeName!' : 'Welcome, ...',
+                    style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                   const Text(
                     'Explore and manage your events',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.black54),
                   ),
                 ],
               ),
               const Spacer(),
-              // IconButton(
-              //   icon: const Icon(Icons.more_vert, color: Colors.black),
-              //   onPressed: () {
-              //
-              //   },
-              //   constraints: const BoxConstraints(
-              //     minWidth: 40,
-              //     minHeight: 40,
-              //   ),
-              // ),
             ],
           ),
         ),
@@ -121,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-             CreateEventButton(userId: widget.userId), // Create Event/List Button
+            CreateEventButton(userId: widget.userId),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -158,7 +150,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (context) => AddFriendPage(userId: widget.userId),
                       ),
                     );
-                    print("Add friend logic");
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),
@@ -186,15 +177,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: friendsList.length,
                 itemBuilder: (context, index) {
                   var friend = friendsList[index];
+                  int upcomingEvents =
+                      upcomingEventsMap[friend['friendId']] ?? 0;
+
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => FriendsEventListPage(
-                            //friendId: friend['friendId'],
+                            friendId: friend['friendId'],
                             friendName: friend['name'],
-                           // userId: widget.userId,
                           ),
                         ),
                       );
@@ -204,10 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFFFFC107),
-                            Color(0xFF2EC2D2),
-                          ],
+                          colors: [Color(0xFFFFC107), Color(0xFF2EC2D2)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -228,11 +218,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         title: Text(
                           friend['name'],
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        subtitle:
-                        const Text('Upcoming Events: 0'),
+                        subtitle: Text('Upcoming Events: $upcomingEvents'),
                         trailing: const Icon(Icons.arrow_forward_ios,
                             color: Colors.black),
                         contentPadding: const EdgeInsets.all(0),
@@ -245,13 +233,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: 0,
-        userId: widget.userId,
-      ),
+      bottomNavigationBar: BottomNavBar(selectedIndex: 0, userId: widget.userId),
     );
   }
 }
+
 
 class CreateEventButton extends StatelessWidget {
   final String userId;

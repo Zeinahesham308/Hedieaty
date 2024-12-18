@@ -65,6 +65,13 @@ class myDatabaseClass {
         FOREIGN KEY(pledged_by) REFERENCES Users(id)
       );
     ''');
+    await db.execute('''
+  CREATE TABLE Categories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE
+  );
+''');
+
 
     await db.execute('''
       CREATE TABLE Friends (
@@ -76,6 +83,9 @@ class myDatabaseClass {
       );
     ''');
     print("---------DATABASE CREATED---------------");
+
+    // Insert predefined categories
+    await insertDefaultCategories(db);
 
   }
   Future<void> saveUser(Map<String, dynamic> user) async {
@@ -133,5 +143,27 @@ class myDatabaseClass {
 
   }
 
+  Future<void> insertDefaultCategories(Database db) async {
+    final List<String> predefinedCategories = [
+      'Electronics',
+      'Fashion & Accessories',
+      'Toys & Games',
+      'Home & Kitchen',
+      'Flowers & Plants',
+      'Books & Stationery',
+      'Beauty & Personal Care',
+      'Food & Beverages',
+      'Experiences & Subscriptions',
+      'Fitness & Sports',
+    ];
+
+    for (String category in predefinedCategories) {
+      await db.insert(
+        'Categories',
+        {'name': category},
+        conflictAlgorithm: ConflictAlgorithm.ignore, // Avoid duplicate inserts
+      );
+    }
+  }
 
 }

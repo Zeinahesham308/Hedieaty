@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import '../controllers/gift_list_controller.dart';
+import 'package:hedieaty/views/GiftsList.dart';
 class GiftListCreationPage extends StatefulWidget {
   final String userId;
 
@@ -10,102 +11,98 @@ class GiftListCreationPage extends StatefulWidget {
 }
 
 class _GiftListCreationPageState extends State<GiftListCreationPage> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _categoryController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
+  String? _selectedEventId; // Event ID of the selected event
+  Map<String, String> _eventMap = {}; // Map to store eventId -> eventName
+  final GiftListController _controller = GiftListController();
 
-  void _createGiftList() {
-    if (_nameController.text.isEmpty || _categoryController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Gift name and category are required!')),
-      );
-      return;
-    }
+  @override
+  void initState() {
+    super.initState();
+    _loadEventNames(); // Fetch event names when the page loads
+  }
 
-    // Placeholder for gift list creation logic
-    print('Gift List Created!');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Gift list created successfully!')),
-    );
-    Navigator.pop(context); // Return to the previous page
+  Future<void> _loadEventNames() async {
+    final events = await _controller.fetchEventNames(widget.userId);
+    setState(() {
+      _eventMap = events;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: PreferredSize(
-      //   preferredSize: const Size.fromHeight(70),
-      //   child: AppBar(
-      //     centerTitle: true,
-      //     flexibleSpace: Container(
-      //       decoration: const BoxDecoration(
-      //         gradient: LinearGradient(
-      //           colors: [Color(0xFFFFC107), Color(0xFF2EC2D2)],
-      //           begin: Alignment.topLeft,
-      //           end: Alignment.bottomRight,
-      //         ),
-      //       ),
-      //     ),
-      //     backgroundColor: Colors.transparent,
-      //     title: const Text(
-      //       'Create Gift List',
-      //       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-      //     ),
-      //   ),
-      // ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildInputField('Gift Name', 'Enter gift name', _nameController),
-              _buildInputField('Category', 'Enter gift category', _categoryController),
-              _buildInputField('Description', 'Enter description', _descriptionController),
-              _buildInputField('Price', 'Enter price', _priceController, isNumeric: true),
-              const SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _createGiftList,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2EC2D2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    child: Text(
-                      'Create Gift List',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
+        child: Column(
+          children: [
+            // Dropdown Menu
+            InputDecorator(
+              decoration: InputDecoration(
+                labelText: 'Select Event',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  value: _selectedEventId,
+                  hint: const Text('Choose an event'),
+                  items: _eventMap.entries.map((entry) {
+                    return DropdownMenuItem<String>(
+                      value: entry.key,
+                      child: Text(entry.value),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedEventId = newValue;
+                    });
+                  },
+                ),
+              ),
+            ),
 
-  Widget _buildInputField(String label, String hint, TextEditingController controller,
-      {bool isNumeric = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: TextField(
-        controller: controller,
-        keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+            const SizedBox(height: 20),
+
+            // Button to Navigate
+            ElevatedButton(
+              onPressed: () {
+                if (_selectedEventId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please select an event to proceed.'),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GiftListPage(
+                        userId: widget.userId,
+                        eventId: _selectedEventId!,
+                      ),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2EC2D2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'Navigate to Gift List',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/firestore_service.dart';
 import '../models/friend_model.dart';
+import '../models/event_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FriendController
@@ -125,5 +126,52 @@ class FriendController
      await doc.reference.delete();
    }
  }
+// Fetch events associated with a specific friend's ID
+  Future<List<Map<String, dynamic>>> fetchEventsByFriendId(String friendId) async {
+    try {
+      Event eventModel = Event(
+        id: '',
+        name: '',
+        date: '',
+        location: '',
+        userId: friendId,
+      );
+
+      // Step 1: Fetch List<Event> from Firestore
+      List<Event> eventList = await eventModel.fetchEventsFromFirestoreByUserId(friendId);
+
+      // Step 2: Convert List<Event> to List<Map<String, dynamic>>
+      List<Map<String, dynamic>> eventMaps = eventList.map((event) => event.toLocalDB()).toList();
+
+      return eventMaps;
+    } catch (e) {
+      print('Error fetching events for friend: $e');
+      return [];
+    }
+  }
+
+  /// Fetch the number of upcoming events for a specific userId
+  Future<int> getUpcomingEventsCount(String friendId) async {
+    try {
+      // Step 1: Fetch all events for the user
+      final List<Map<String, dynamic>> events = await fetchEventsByFriendId(friendId);
+
+      // Step 2: Get the current date
+      DateTime now = DateTime.now();
+
+      // Step 3: Filter events that have a date in the future
+      final upcomingEvents = events.where((event) {
+        DateTime eventDate = DateTime.parse(event['date']);
+        return eventDate.isAfter(now);
+      }).toList();
+
+      // Step 4: Return the count of upcoming events
+      return upcomingEvents.length;
+    } catch (e) {
+      print('Error fetching upcoming events: $e');
+      return 0; // Return 0 if there's an error
+    }
+  }
+
 }
 
