@@ -158,4 +158,66 @@ class GiftListController {
         return [];
       }
     }
+
+
+
+  /// Update the gift status by calling the model
+  Future<void> updateGiftStatus(String giftId, String newStatus, String pledgedBy,String eventId) async {
+    try {
+      final Gift gift = Gift(
+        id: giftId,
+        name: '',
+        category: '',
+        description: '',
+        price: 0.0,
+        status: '',
+        eventId: '',
+        pledgedBy: pledgedBy
+      );
+      await gift.updateGiftStatus(giftId,newStatus,pledgedBy,eventId);
+    } catch (e) {
+      print('Controller Error: Failed to update gift status: $e');
+    }
   }
+
+
+
+  Future<void> pledgeGift(String giftId, String userId,eventId) async {
+    Gift gift = Gift(
+        id: giftId,
+        name: '',
+        category: '',
+        description: '',
+        price: 0.0,
+        status: '',
+        eventId: '',
+        pledgedBy: userId
+    );
+
+    await gift.updateGiftStatus(giftId,'Pledged', userId,eventId);
+  }
+
+
+
+
+  Future<void> purchaseGift(String giftId,userId,eventId) async {
+    Gift gift = Gift(
+      id: giftId,
+      name: '',
+      category: '',
+      description: '',
+      price: 0.0,
+      status: '',
+      eventId: '',
+      pledgedBy: userId,
+    );
+
+    await gift.updateGiftStatus(giftId,'Purchased',userId,eventId);
+  }
+
+
+  Future<List<Map<String, dynamic>>> fetchPledgedGifts(String userId) async {
+    return await Gift.getPledgedGiftsAcrossEvents(userId);
+  }
+
+}

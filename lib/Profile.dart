@@ -107,7 +107,7 @@ class ProfileScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MyPledgedGiftsPage(userId: userId)),
+                  MaterialPageRoute(builder: (context) => PledgedGiftsPage(userId: userId)),
                 );
               },
             ),

@@ -5,11 +5,13 @@ import 'FriendsGiftList.dart'; // Import FriendsGiftList page
 class FriendsEventListPage extends StatefulWidget {
   final String friendId;
   final String friendName;
+  final String userId;
 
   const FriendsEventListPage({
     Key? key,
     required this.friendId,
     required this.friendName,
+    required this.userId,
   }) : super(key: key);
 
   @override
@@ -91,6 +93,7 @@ class _FriendsEventListPageState extends State<FriendsEventListPage> {
                     eventName: event['name'],
                     friendName: widget.friendName,
                     eventId:event['id'],
+                    userId: widget.userId,
                   ),
                 ),
               );

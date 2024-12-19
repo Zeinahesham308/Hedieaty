@@ -25,7 +25,7 @@ class BottomNavBar extends StatelessWidget {
       case 1:
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) =>  MyPledgedGiftsPage(userId: userId)),
+          MaterialPageRoute(builder: (context) =>  PledgedGiftsPage(userId: userId)),
               (route) => false,
         );
         break;

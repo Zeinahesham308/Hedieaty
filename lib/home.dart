@@ -188,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) => FriendsEventListPage(
                             friendId: friend['friendId'],
                             friendName: friend['name'],
+                            userId: widget.userId,
                           ),
                         ),
                       );

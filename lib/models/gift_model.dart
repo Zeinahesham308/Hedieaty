@@ -167,7 +167,82 @@ class Gift {
       return [];
     }
   }
+  /// Update Gift Status in Firestore
+  Future<void> updateGiftStatus(String giftId, String newStatus, String? pledgedBy, String eventId) async {
+    try {
+      // Access the 'Gifts' subcollection inside the specific 'Event' document
+      await _firestore
+          .collection('Events') // Parent collection
+          .doc(eventId) // Specific event document
+          .collection('Gifts') // Subcollection 'Gifts'
+          .doc(giftId) // Specific gift document
+          .update({
+        'status': newStatus,
+        'pledgedBy': pledgedBy ?? '', // Set pledgedBy if provided
+      });
+      print('Gift status updated successfully.');
+    } catch (e) {
+      print('Error updating gift status: $e');
+    }
+  }
 
+
+
+  static Future<List<Map<String, dynamic>>> getPledgedGiftsAcrossEvents(String userId) async {
+    try {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Step 1: Fetch all events
+      QuerySnapshot eventsSnapshot = await firestore.collection('Events').get();
+
+      // Step 2: Initialize an empty list to store pledged gifts
+      List<Map<String, dynamic>> pledgedGifts = [];
+
+      // Step 3: Loop through each event and fetch its Gifts subcollection
+      for (var eventDoc in eventsSnapshot.docs) {
+        // Extract event details
+        final eventId = eventDoc.id;
+        final eventData = eventDoc.data() as Map<String, dynamic>;
+        final eventName = eventData['name'] ?? 'Unknown Event';
+        final eventDate = eventData['date'] ?? 'Unknown Date';
+        final eventCreatorId = eventData['userId'] ?? '';
+
+        // Step 4: Fetch the friend's name using the userId
+        String friendName = 'Unknown Friend';
+        if (eventCreatorId.isNotEmpty) {
+          final userDoc = await firestore.collection('Users').doc(eventCreatorId).get();
+          if (userDoc.exists) {
+            friendName = userDoc.data()?['name'] ?? 'Unknown Friend';
+          }
+        }
+
+        // Step 5: Fetch gifts for the event
+        QuerySnapshot giftsSnapshot = await eventDoc.reference
+            .collection('Gifts') // Access the Gifts subcollection
+            .where('pledgedBy', isEqualTo: userId) // Filter by pledgedBy
+            .get();
+
+        // Add the pledged gifts to the result list with additional event details
+        pledgedGifts.addAll(
+          giftsSnapshot.docs.map((doc) {
+            final giftData = doc.data() as Map<String, dynamic>;
+            return {
+              ...giftData,
+              'eventId': eventId,
+              'eventName': eventName,
+              'eventDate': eventDate,
+              'friendName': friendName,
+            };
+          }).toList(),
+        );
+      }
+
+      return pledgedGifts;
+    } catch (e) {
+      print('Error fetching pledged gifts across events: $e');
+      return [];
+    }
+  }
 
 
 }
