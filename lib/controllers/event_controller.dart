@@ -85,7 +85,7 @@ class EventController {
       description: description,
     );
   }
-  Future<void> deleteEvent(String eventId) async {
+  Future<String> deleteEvent(String eventId) async {
     final Event event = Event(
       id: '', // Dummy ID, not required for fetching events
       name: '',
@@ -93,7 +93,7 @@ class EventController {
       location: '',
       userId: '',
     );
-    await event.deleteEvent(eventId);
+   return await event.deleteEvent(eventId);
   }
   /// Sort events alphabetically by name
   List<Map<String, dynamic>> sortEventsByName(List<Map<String, dynamic>> events) {
@@ -139,7 +139,8 @@ class EventController {
         userId: '',
       );
 
-      final Map<String, dynamic> localEvent = await eventModel.getEventById(eventID);
+      final Map<String, dynamic> localEvent = await eventModel.getEventById(
+          eventID);
 
       if (localEvent.isEmpty) {
         print('No event found with the specified ID.');
@@ -147,7 +148,8 @@ class EventController {
       }
 
       // Step 2: Upload the event to Firestore
-      final DocumentReference eventDocRef = _firestore.collection('Events').doc(localEvent['id']);
+      final DocumentReference eventDocRef = _firestore.collection('Events').doc(
+          localEvent['id']);
       await eventDocRef.set({
         'id': localEvent['id'],
         'name': localEvent['name'],
@@ -172,30 +174,49 @@ class EventController {
         pledgedBy: '',
       );
 
-      final List<Map<String, dynamic>> gifts = await giftModel.getGiftsForEvent(eventID);
+      final List<Map<String, dynamic>> gifts = await giftModel.getGiftsForEvent(
+          eventID);
 
       // Step 4: Upload each gift to Firestore under the event's document
       for (var gift in gifts) {
-        await eventDocRef.collection('Gifts').doc(gift['id']).set({
-          'id': gift['id'],
-          'name': gift['name'],
-          'description': gift['description'] ?? '',
-          'category': gift['category'],
-          'price': gift['price'],
-          'status': gift['status'],
-          'pledgedBy': gift['pledged_by'] ?? '',
-          'uploadedAt': FieldValue.serverTimestamp(),
-        });
+        // Fetch the latest status of the gift from Firestore
+        final DocumentSnapshot giftDoc = await _firestore
+            .collection('Events')
+            .doc(eventID)
+            .collection('Gifts')
+            .doc(gift['id'])
+            .get();
+
+        // Explicitly cast `data()` to `Map<String, dynamic>`
+        final Map<String, dynamic>? giftData = giftDoc.data() as Map<String, dynamic>?;
+
+        final String statusInFirestore = giftData?['status'] ?? 'Available';
+        if (statusInFirestore == 'Available') {
+          // Upload gift if status is 'Available'
+          await eventDocRef.collection('Gifts').doc(gift['id']).set({
+            'id': gift['id'],
+            'name': gift['name'],
+            'description': gift['description'] ?? '',
+            'category': gift['category'],
+            'price': gift['price'],
+            'status': gift['status'],
+            'pledgedBy': gift['pledged_by'] ?? '',
+            'uploadedAt': FieldValue.serverTimestamp(),
+          });
+          print('Gift ${gift['name']} uploaded successfully.');
+        } else {
+          print(
+              'Gift ${gift['name']} not uploaded due to status: $statusInFirestore');
+        }
       }
 
-      print('All gifts associated with the event have been uploaded successfully.');
+      print(
+          'Event and associated gifts (where applicable) have been uploaded successfully.');
     } catch (e) {
       print('Error publishing gift list: $e');
     }
-
-
-
   }
+
   /// Fetch events for a specific friend from Firestore
   Future<List<Event>> fetchEventsForFriend(String friendId) async {
     final Event eventModel = Event(

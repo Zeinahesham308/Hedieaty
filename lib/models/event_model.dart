@@ -126,13 +126,51 @@ class Event {
       return {};
     }
   }
-  Future<void> deleteEvent(String eventId) async {
-    String sql = "DELETE FROM Events WHERE id = '$eventId'";
+  Future<String> deleteEvent(String eventId) async {
     try {
-      await _db.deleteData(sql);
-      print('Event deleted successfully!');
+      // Step 1: Check for gifts in Firestore that are not "Available"
+      final QuerySnapshot nonAvailableGifts = await _firestore
+          .collection('Events') // Access the Events collection
+          .doc(eventId) // Specific event document
+          .collection('Gifts') // Access the Gifts subcollection
+          .where('status', isNotEqualTo: 'Available') // Filter by status
+          .get();
+
+      if (nonAvailableGifts.docs.isNotEmpty) {
+        print('Cannot delete the event because there are gifts that are not available.');
+        return "Can't be deleted : There are Pledged gifts";
+      }
+
+      // Step 2: Delete associated gifts from Firestore
+      final giftsCollection = _firestore
+          .collection('Events') // Access the Events collection
+          .doc(eventId) // Specific event document
+          .collection('Gifts'); // Access the Gifts subcollection
+
+      final giftDocs = await giftsCollection.get();
+      for (var giftDoc in giftDocs.docs) {
+        await giftDoc.reference.delete(); // Delete each gift document
+      }
+
+      // Step 3: Delete the event from Firestore
+      await _firestore.collection('Events').doc(eventId).delete();
+      print('Event and associated gifts deleted successfully from Firestore.');
+
+      // Optional: If you are maintaining a local database
+      // Step 4: Delete associated gifts from the local database
+      String deleteGiftsSql = "DELETE FROM Gifts WHERE event_id = '$eventId'";
+      await _db.deleteData(deleteGiftsSql);
+
+      // Step 5: Delete the event from the local database
+      String deleteEventSql = "DELETE FROM Events WHERE id = '$eventId'";
+      await _db.deleteData(deleteEventSql);
+
+      print('Event and associated gifts deleted successfully from the local database.');
+
+      return " Event Deleted successfully";
     } catch (e) {
       print('Error deleting event: $e');
+      return '';
     }
   }
   // Fetch events associated with a specific userId from Firestore

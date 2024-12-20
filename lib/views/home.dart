@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
-import 'views/FriendsEventList.dart'; // Replace with the actual import path
-import 'controllers/home_screen_controller.dart';
-import 'controllers/friend_controller.dart';
-import 'views/AddFriend.dart';
-import 'views/listCreationPage.dart';
+import 'FriendsEventList.dart'; // Replace with the actual import path
+import '../controllers/home_screen_controller.dart';
+import '../controllers/friend_controller.dart';
+import 'AddFriend.dart';
+import 'listCreationPage.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userId;

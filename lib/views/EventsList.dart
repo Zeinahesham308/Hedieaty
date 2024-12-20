@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../controllers/event_controller.dart';
-import '../bottom_nav_bar.dart';
+import 'bottom_nav_bar.dart';
 import 'eventCreation.dart';
 
 class EventListPage extends StatefulWidget {
@@ -117,10 +117,10 @@ class _EventListPageState extends State<EventListPage> {
   }
 
   void _deleteEvent(String eventId) async {
-    await _controller.deleteEvent(eventId);
+    String message = await _controller.deleteEvent(eventId);
     _loadEvents();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Event deleted successfully')),
+       SnackBar(content: Text(message)),
     );
   }
 
@@ -163,14 +163,14 @@ class _EventListPageState extends State<EventListPage> {
                     value: 'name',
                     child: Text(
                       'Sort by Name',
-                      style: TextStyle(color: Color(0xFF2EC2D2), fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),
                   DropdownMenuItem(
                     value: 'status',
                     child: Text(
                       'Sort by Status',
-                      style: TextStyle(color: Color(0xFF2EC2D2), fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -181,7 +181,7 @@ class _EventListPageState extends State<EventListPage> {
                 ),
                 icon: const Icon(
                   Icons.arrow_drop_down,
-                  color: Color(0xFF2EC2D2), // Dropdown icon color
+                  color: Colors.black, // Dropdown icon color
                 ),
                 onChanged: (value) {
                   if (value == 'name') {
@@ -196,11 +196,11 @@ class _EventListPageState extends State<EventListPage> {
                 },
                 hint: const Text(
                   'Sort By',
-                  style: TextStyle(color: Color(0xFF2EC2D2), fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                 ),
                 underline: Container(
                   height: 2,
-                  color: Color(0xFF2EC2D2), // Underline color
+                  color: Colors.black, // Underline color
                 ),
               ),
 

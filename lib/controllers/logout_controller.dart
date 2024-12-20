@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hedieaty/first.dart';
+import 'package:hedieaty/views/first.dart';
 import '../models/profile_model.dart';
 
 class LogoutController {

@@ -1,9 +1,11 @@
 import '../services/myDatabase.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ProfileModel {
   final myDatabaseClass _localDb = myDatabaseClass();
   final String userId;
   ProfileModel(this.userId);
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 
   Future<void> clearLocalUserData() async {
@@ -36,7 +38,25 @@ class ProfileModel {
     }
   }
 
+  Future<void> updateUserField(String userId, String field, String value) async {
+    try {
+      // Update in Firestore
+      await _firestore.collection('Users').doc(userId).update({field: value});
 
+      // Update in Local Database
+      String sql = '''
+      UPDATE Users
+      SET $field = ?
+      WHERE id = ?
+    ''';
+
+      await _localDb.updateProfileData(sql, [value, userId]);
+
+      print('$field updated successfully in both Firestore and Local Database.');
+    } catch (e) {
+      throw Exception('Error updating $field: $e');
+    }
+  }
 
 
 

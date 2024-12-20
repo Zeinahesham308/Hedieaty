@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../bottom_nav_bar.dart';
 
 class GiftDetailsPage extends StatelessWidget {
   final String giftName;
@@ -27,7 +26,6 @@ class GiftDetailsPage extends StatelessWidget {
     TextEditingController(text: category);
     final TextEditingController priceController =
     TextEditingController(text: price.toString());
-    bool isPledged = status == "Pledged";
 
     return Scaffold(
       appBar: AppBar(
@@ -61,13 +59,15 @@ class GiftDetailsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Gift Name Field
-              const Text("Gift Name", style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                "Gift Name",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: giftNameController,
-                readOnly: isPledged,
+                readOnly: true,
                 decoration: InputDecoration(
-                  hintText: "Enter gift name",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -76,14 +76,16 @@ class GiftDetailsPage extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Description Field
-              const Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                "Description",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: descriptionController,
-                readOnly: isPledged,
+                readOnly: true,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: "Enter description",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -92,13 +94,15 @@ class GiftDetailsPage extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Category Field
-              const Text("Category", style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                "Category",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: categoryController,
-                readOnly: isPledged,
+                readOnly: true,
                 decoration: InputDecoration(
-                  hintText: "Enter category",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -107,14 +111,16 @@ class GiftDetailsPage extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Price Field
-              const Text("Price", style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                "Price",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: priceController,
-                readOnly: isPledged,
+                readOnly: true,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: "Enter price",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -123,45 +129,36 @@ class GiftDetailsPage extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Upload Image Section
-              const Text("Gift Image", style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                "Gift Image",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
-              GestureDetector(
-                onTap: isPledged
-                    ? null
-                    : () {
-                  // Handle image upload logic
-                },
-                child: Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      isPledged ? "Image cannot be modified" : "Tap to upload image",
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
+              Container(
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    "Image cannot be modified",
+                    style: TextStyle(color: Colors.grey[600]),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Status Toggle
-              const Text("Status", style: TextStyle(fontWeight: FontWeight.bold)),
+              // Status Display
+              const Text(
+                "Status",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                value: status,
-                items: const [
-                  DropdownMenuItem(value: "Available", child: Text("Available")),
-                  DropdownMenuItem(value: "Pledged", child: Text("Pledged")),
-                ],
-                onChanged: isPledged
-                    ? null
-                    : (value) {
-                  // Handle status change
-                },
+              TextField(
+                controller: TextEditingController(text: status),
+                readOnly: true,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -170,38 +167,11 @@ class GiftDetailsPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // Save Button
-              Center(
-                child: ElevatedButton(
-                  onPressed: isPledged
-                      ? null
-                      : () {
-                    // Handle save logic here
-                    Navigator.pop(context); // Return to Gift List Page
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 32),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    backgroundColor:
-                    isPledged ? Colors.grey : const Color(0xFF2EC2D2),
-                  ),
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
+
             ],
           ),
         ),
       ),
-      //  bottomNavigationBar: const BottomNavBar(selectedIndex: 2)
     );
   }
 }

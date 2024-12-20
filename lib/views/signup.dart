@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'controllers/signup_controller.dart';
+import '../controllers/signup_controller.dart';
 
 class SignUpScreen extends StatelessWidget {
   final SignUpController _controller = SignUpController();

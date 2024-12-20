@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../controllers/gift_list_controller.dart';
-import '../bottom_nav_bar.dart';
+import 'bottom_nav_bar.dart';
 
 class AddGiftPage extends StatefulWidget {
   final String eventId;
@@ -67,7 +67,7 @@ class _AddGiftPageState extends State<AddGiftPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Gift added successfully!')),
     );
-    Navigator.pop(context); // Return to the previous page
+    Navigator.pop(context,true); // Return to the previous page
   }
 
   @override

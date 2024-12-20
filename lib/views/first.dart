@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'controllers/first_screen_controller.dart';
+import '../controllers/first_screen_controller.dart';
 
 class FirstScreen extends StatelessWidget {
   final FirstScreenController _controller = FirstScreenController();

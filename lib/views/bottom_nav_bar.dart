@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'MyPledgedGifts.dart';
-import 'views/EventsList.dart';
+import 'EventsList.dart';
 import 'MyNotifications.dart';
 import 'Profile.dart';
 //import 'controllers/home_screen_controller.dart';

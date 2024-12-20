@@ -60,7 +60,7 @@ class myDatabaseClass {
         price REAL,
         status TEXT,
         event_id TEXT,
-         pledged_by INTEGER,
+         pledged_by TEXT,
         FOREIGN KEY(event_id) REFERENCES Events(id),
         FOREIGN KEY(pledged_by) REFERENCES Users(id)
       );
@@ -123,6 +123,15 @@ class myDatabaseClass {
     Database? mydb=await mydbcheck();
     var response = mydb!.rawQuery(sql);
     return response;
+  }
+
+
+  Future<int> updateProfileData(String sql, List<dynamic> arguments) async {
+    Database? mydb = await mydbcheck();
+    if (mydb == null) {
+      throw Exception('Database is not initialized');
+    }
+    return await mydb.rawUpdate(sql, arguments);
   }
   deleteData(String sql) async{
     Database? mydb=await mydbcheck();

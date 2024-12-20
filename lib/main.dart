@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'services/myDatabase.dart';
-import 'first.dart';
-import 'login.dart';
-import 'signup.dart';
-import 'home.dart';
+import 'views/first.dart';
+import 'views/login.dart';
+import 'views/signup.dart';
+import 'views/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +12,7 @@ void main() async {
   myDatabaseClass database = myDatabaseClass();
 
   // Drop the database
-  //await database.reseting();
+  await database.reseting();
 
   // Reinitialize the database
   await database.mydbcheck(); // Ensure database is initialized

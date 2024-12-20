@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'controllers/notification_controller.dart';
-import 'controllers/friend_controller.dart';
+import '../controllers/notification_controller.dart';
+import '../controllers/friend_controller.dart';
 import 'bottom_nav_bar.dart';
 
 class NotificationPage extends StatefulWidget {

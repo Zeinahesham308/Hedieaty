@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../controllers/gift_list_controller.dart';
+import '../controllers/notification_controller.dart';
 import 'friendGiftDetails.dart';
 
 class FriendsGiftListPage extends StatefulWidget {
@@ -29,6 +30,15 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
     super.initState();
     _fetchGifts();
   }
+  // void sendPledgeNotification(String giftOwnerId, String pledgerId, String giftName) {
+  //   final String message = "User has pledged your gift: $giftName";
+  //   NotificationController.addNotification(
+  //     message: message,
+  //     receiverId: giftOwnerId,
+  //     senderId: pledgerId,
+  //     type: 'gift_pledged',
+  //   );
+  // }
 
   Future<void> _fetchGifts() async {
     try {

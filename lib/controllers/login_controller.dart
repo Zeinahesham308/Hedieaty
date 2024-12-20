@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../home.dart';
+import '../views/home.dart';
 import '../services/myDatabase.dart';
 import '../models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:hedieaty/views/notificationPopUp.dart';
 class LoginController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -41,12 +41,22 @@ class LoginController {
 
         // Step 4: Navigate to HomeScreen
         // Pass the userId to the HomeScreen for further use
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => HomeScreen(userId: userId),
+        //   ),
+        // );
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomeScreen(userId: userId),
+            builder: (context) => NotificationHandler(
+              userId: userId, // Pass the userId to the NotificationHandler
+              child: HomeScreen(userId: userId), // Wrap HomeScreen
+            ),
           ),
         );
+
       } else {
         // Show a SnackBar if the user does not exist in Firestore
         ScaffoldMessenger.of(context).showSnackBar(

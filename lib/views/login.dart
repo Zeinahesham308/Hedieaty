@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'controllers/login_controller.dart';
+import '../controllers/login_controller.dart';
 
 class LoginScreen extends StatelessWidget {
   final LoginController _controller = LoginController(); // Instantiate the controller
@@ -90,18 +90,18 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    // Add logic to handle password reset
-                  },
-                  child: const Text(
-                    'Forget password?',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: TextButton(
+              //     onPressed: () {
+              //       // Add logic to handle password reset
+              //     },
+              //     child: const Text(
+              //       'Forget password?',
+              //       style: TextStyle(color: Colors.white),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {

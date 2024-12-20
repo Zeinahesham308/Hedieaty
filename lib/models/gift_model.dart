@@ -180,10 +180,23 @@ class Gift {
         'status': newStatus,
         'pledgedBy': pledgedBy ?? '', // Set pledgedBy if provided
       });
+
+
       print('Gift status updated successfully.');
+      // Update in Local Database (SQLite)
+      String sql = '''
+      UPDATE Gifts 
+      SET status = '$newStatus', 
+          pledged_by = '${pledgedBy ?? ''}'
+      WHERE id = '$giftId' AND event_id = '$eventId';
+    ''';
+
+      var response = await _db.updateData(sql);
+      print('Gift status updated successfully in Local Database. Response: $response');
     } catch (e) {
       print('Error updating gift status: $e');
     }
+
   }
 
 
@@ -241,6 +254,61 @@ class Gift {
     } catch (e) {
       print('Error fetching pledged gifts across events: $e');
       return [];
+    }
+  }
+  Future<void> updateGiftDetails({
+    required String id,
+    required String name,
+    required String description,
+    required String category,
+    required double price,
+  }) async {
+    String sql = '''
+      UPDATE Gifts
+      SET name = '$name',
+          description = '$description',
+          category = '$category',
+          price = $price
+      WHERE id = '$id'
+    ''';
+
+    try {
+      var response = await _db.updateData(sql);
+      if (response != null) {
+        print('Gift details updated successfully. Response: $response');
+      } else {
+        print('Failed to update gift details.');
+      }
+    } catch (e) {
+      print('Error updating gift details in Local Database: $e');
+    }
+  }
+
+
+  /// Fetch gift status by giftId and eventId
+  /// Fetch gift status by giftId and eventId
+  Future<String> fetchGiftStatus(String giftId, String eventId) async {
+    try {
+      // Access the 'Gifts' subcollection inside the specific 'Event' document
+      final DocumentSnapshot giftDoc = await _firestore
+          .collection('Events') // Parent collection
+          .doc(eventId) // Specific event document
+          .collection('Gifts') // Subcollection 'Gifts'
+          .doc(giftId) // Specific gift document
+          .get();
+
+      if (giftDoc.exists) {
+        final Map<String, dynamic>? giftData = giftDoc.data() as Map<String, dynamic>?; // Cast to Map
+        final String status = giftData?['status'] ?? 'Available';
+        print('Gift status fetched successfully: $status');
+        return status;
+      }
+      else {
+        return 'Available';
+      }
+    } catch (e) {
+      print('Error fetching gift status: $e');
+      return 'Error';
     }
   }
 

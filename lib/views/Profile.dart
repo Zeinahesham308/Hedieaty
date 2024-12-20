@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
 import 'ProfileDetails.dart';
 import 'MyPledgedGifts.dart';
-import 'controllers/logout_controller.dart';
-import 'controllers/profile_controller.dart';
+import '../controllers/logout_controller.dart';
+import '../controllers/profile_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String userId;

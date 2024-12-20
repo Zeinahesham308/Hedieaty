@@ -41,4 +41,37 @@ class NotificationController {
       'status': 'read',
     });
   }
+
+  Future<void> sendPledgeNotification(
+      String receiverId,
+      String senderId,
+      String senderName,
+      String giftName,
+      String eventName,
+      ) async {
+    final String message = '$senderName pledged "$giftName" from "$eventName"';
+    print(message);
+    await addNotification(receiverId, senderId, message, 'gift_pledged');
+  }
+
+
+  Stream<List<Map<String, dynamic>>> listenForNotifications(String receiverId) {
+    return _firestore
+        .collection('Notifications')
+        .where('receiverId', isEqualTo: receiverId)
+        .where('status', isEqualTo: 'unread')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+        .toList());
+  }
+  Future<void> markNotificationAsRead(String notificationId) async {
+    try {
+      await _firestore.collection('Notifications').doc(notificationId).update({
+        'status': 'read',
+      });
+    } catch (e) {
+      print('Error marking notification as read: $e');
+    }
+  }
 }

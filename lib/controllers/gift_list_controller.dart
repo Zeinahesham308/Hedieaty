@@ -1,6 +1,9 @@
 import '../models/event_model.dart';
 import '../models/gift_model.dart';
 import 'package:uuid/uuid.dart';
+import '../controllers/notification_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class GiftListController {
   final _uuid = const Uuid();
@@ -19,6 +22,9 @@ class GiftListController {
     // Convert events into a map of eventId -> eventName
     return {for (var e in events) e['id'] as String: e['name'] as String};
   }
+
+
+
   // Fetch all gifts for a specific event from the database
   Future<List<Map<String, dynamic>>> fetchGiftsForEvent(String eventId) async {
     // Instantiate the Gift model
@@ -159,9 +165,6 @@ class GiftListController {
       }
     }
 
-
-
-  /// Update the gift status by calling the model
   Future<void> updateGiftStatus(String giftId, String newStatus, String pledgedBy,String eventId) async {
     try {
       final Gift gift = Gift(
@@ -174,7 +177,46 @@ class GiftListController {
         eventId: '',
         pledgedBy: pledgedBy
       );
+      print("HELLO from GIFT LIST CONTROLLER");
       await gift.updateGiftStatus(giftId,newStatus,pledgedBy,eventId);
+
+      final eventDoc = await FirebaseFirestore.instance
+          .collection('Events')
+          .doc(eventId)
+          .get();
+
+      final String eventName = eventDoc.data()?['name'] ?? 'Unknown Event';
+
+
+      final giftDoc = await FirebaseFirestore.instance
+          .collection('Events')
+          .doc(eventId)
+          .collection('Gifts')
+          .doc(giftId)
+          .get();
+
+      final String giftName = giftDoc.data()?['name'] ?? 'Unknown Gift';
+      final String Receiver =eventDoc.data()?['userId'] ?? 'Unokwn receiver';
+
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(pledgedBy)
+          .get();
+
+      final String pledgerName = userDoc.data()?['name'] ?? 'Unknown User';
+
+      final String pledger = giftDoc.data()?['pledgedBy'] ?? '';
+      if (pledger.isNotEmpty) {
+        //final String message = '$pledgerName pledged "$giftName" from "$eventName"';
+        await NotificationController().sendPledgeNotification(
+          Receiver,
+          pledgedBy,
+          pledgerName,
+          giftName,
+            eventName
+        );
+      }
     } catch (e) {
       print('Controller Error: Failed to update gift status: $e');
     }
@@ -219,5 +261,90 @@ class GiftListController {
   Future<List<Map<String, dynamic>>> fetchPledgedGifts(String userId) async {
     return await Gift.getPledgedGiftsAcrossEvents(userId);
   }
+  Future<void> updateGiftDetails(String id, String name, String category, String description, double price) async {
+    Gift gift = Gift(
+      id: id,
+      name: '',
+      category: '',
+      description: '',
+      price: 0.0,
+      status: '',
+      eventId: '',
+      pledgedBy: ' ',
+    );
+    try {
+      await gift.updateGiftDetails(
+        id: id,
+        name: name,
+        category: category,
+        description: description,
+        price: price,
+      );
+    } catch (e) {
+      print('Error updating gift details in the controller: $e');
+    }
+}
+
+  /// Sort gifts alphabetically by name
+  List<Map<String, dynamic>> sortGiftsByName(List<Map<String, dynamic>> gifts) {
+    final modifiableGifts = List<Map<String, dynamic>>.from(gifts); // Make a mutable copy
+    modifiableGifts.sort((a, b) => (a['name'] ?? '').toString().compareTo((b['name'] ?? '').toString()));
+    return modifiableGifts;
+  }
+
+  /// Sort gifts alphabetically by category
+  List<Map<String, dynamic>> sortGiftsByCategory(List<Map<String, dynamic>> gifts) {
+    final modifiableGifts = List<Map<String, dynamic>>.from(gifts);
+    modifiableGifts.sort((a, b) => (a['category'] ?? '').toString().compareTo((b['category'] ?? '').toString()));
+    return modifiableGifts;
+  }
+
+  /// Sort gifts by status: Available -> Pledged -> Purchased
+  List<Map<String, dynamic>> sortGiftsByStatus(List<Map<String, dynamic>> gifts) {
+    final modifiableGifts = List<Map<String, dynamic>>.from(gifts);
+    modifiableGifts.sort((a, b) {
+      final String statusA = a['status'] ?? '';
+      final String statusB = b['status'] ?? '';
+      return _statusOrder(statusA).compareTo(_statusOrder(statusB));
+    });
+    return modifiableGifts;
+  }
+
+  /// Helper function to define status order
+  int _statusOrder(String status) {
+    switch (status) {
+      case 'Available':
+        return 0;
+      case 'Pledged':
+        return 1;
+      case 'Purchased':
+        return 2;
+      default:
+        return 3;
+    }
+  }
+  /// Controller function to fetch gift status
+  Future<String> getGiftStatus(String giftId, String eventId) async {
+    try {
+      Gift gift = Gift(
+        id: giftId,
+        name: '',
+        category: '',
+        description: '',
+        price: 0.0,
+        status: '',
+        eventId: eventId,
+        pledgedBy: ' ',
+      );
+      final String status = await gift.fetchGiftStatus(giftId, eventId);
+      return status;
+    } catch (e) {
+      print('Controller Error: Failed to fetch gift status: $e');
+      return 'Error';
+    }
+  }
+
+
+
 
 }
