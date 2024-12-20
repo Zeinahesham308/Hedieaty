@@ -30,6 +30,7 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 40),
               // Back Button
               IconButton(
+                key: const Key('back_button'), // Key for testing
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () => _controller.goBack(context),
               ),
@@ -55,6 +56,7 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               TextField(
+                key: const Key('email_field'), // Key for testing
                 controller: _emailController,
                 decoration: InputDecoration(
                   hintText: 'example@email.com',
@@ -77,6 +79,7 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               TextField(
+                key: const Key('password_field'), // Key for testing
                 controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
@@ -89,21 +92,9 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: TextButton(
-              //     onPressed: () {
-              //       // Add logic to handle password reset
-              //     },
-              //     child: const Text(
-              //       'Forget password?',
-              //       style: TextStyle(color: Colors.white),
-              //     ),
-              //   ),
-              // ),
               const SizedBox(height: 20),
               ElevatedButton(
+                key: const Key('login_button'), // Key for testing
                 onPressed: () {
                   // Call the loginUser method
                   _controller.loginUser(
@@ -133,6 +124,7 @@ class LoginScreen extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                   ),
                   TextButton(
+                    key: const Key('signup_button'), // Key for testing
                     onPressed: () => _controller.goSignUp(context),
                     child: const Text(
                       'Signup',

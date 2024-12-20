@@ -28,12 +28,14 @@ class FirstScreen extends StatelessWidget {
               const SizedBox(height: 50),
               const Icon(
                 Icons.card_giftcard,
+                key: Key('gift_icon'), // Key for testing the icon
                 size: 100,
                 color: Colors.white,
               ),
               const SizedBox(height: 20),
               const Text(
                 'Hedieaty',
+                key: Key('app_title'), // Key for testing the title
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
@@ -43,6 +45,7 @@ class FirstScreen extends StatelessWidget {
               const SizedBox(height: 10),
               const Text(
                 'Hello! log in or sign up to create amazing gift lists',
+                key: Key('welcome_message'), // Key for testing the welcome message
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
@@ -51,6 +54,7 @@ class FirstScreen extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               ElevatedButton(
+                key: const Key('login_button'), // Key for testing the login button
                 onPressed: () => _controller.navigateToLogin(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepOrangeAccent,
@@ -66,6 +70,7 @@ class FirstScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                key: const Key('signup_button'), // Key for testing the signup button
                 onPressed: () => _controller.navigateToSignUp(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.lightBlueAccent,

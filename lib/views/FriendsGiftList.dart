@@ -30,15 +30,6 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
     super.initState();
     _fetchGifts();
   }
-  // void sendPledgeNotification(String giftOwnerId, String pledgerId, String giftName) {
-  //   final String message = "User has pledged your gift: $giftName";
-  //   NotificationController.addNotification(
-  //     message: message,
-  //     receiverId: giftOwnerId,
-  //     senderId: pledgerId,
-  //     type: 'gift_pledged',
-  //   );
-  // }
 
   Future<void> _fetchGifts() async {
     try {
@@ -53,7 +44,7 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
 
   Future<void> _updateGiftStatus(String giftId, String newStatus) async {
     try {
-      await _controller.updateGiftStatus(giftId, newStatus, widget.userId,widget.eventId);
+      await _controller.updateGiftStatus(giftId, newStatus, widget.userId, widget.eventId);
       await _fetchGifts();
     } catch (e) {
       print('Error updating gift status: $e');
@@ -75,8 +66,8 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
 
   Widget _getActionButton(String giftId, String status, String pledgedBy) {
     if (status.toLowerCase() == 'available') {
-      print("WALLAHE ?")
-;      return ElevatedButton(
+      return ElevatedButton(
+        key: Key('pledge_button_$giftId'),
         onPressed: () => _updateGiftStatus(giftId, 'pledged'),
         style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
         child: const Text(
@@ -86,6 +77,7 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
       );
     } else if (status.toLowerCase() == 'pledged' && pledgedBy == widget.userId) {
       return ElevatedButton(
+        key: Key('purchase_button_$giftId'),
         onPressed: () => _updateGiftStatus(giftId, 'purchased'),
         style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
         child: const Text(
@@ -103,6 +95,7 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
+          key: const Key('friends_gift_list_appbar'),
           centerTitle: true,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
@@ -116,6 +109,7 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
           backgroundColor: Colors.transparent,
           title: Text(
             '${widget.friendName}\'s ${widget.eventName} Gifts',
+            key: const Key('friends_gift_list_title'),
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -127,16 +121,20 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: _gifts.isEmpty
-            ? const Center(child: Text('No gifts available for this event.'))
+            ? const Center(
+          key: Key('no_gifts_message'),
+          child: Text('No gifts available for this event.'),
+        )
             : ListView.builder(
+          key: const Key('gifts_list'),
           itemCount: _gifts.length,
           itemBuilder: (context, index) {
             final gift = _gifts[index];
             final borderColor = _getBorderColor(gift['status'] ?? '');
 
             return GestureDetector(
+              key: Key('gift_item_$index'),
               onTap: () {
-                // Navigate to gift details page
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -172,6 +170,7 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
                       children: [
                         Text(
                           gift['name'] ?? 'No Name',
+                          key: Key('gift_name_$index'),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -181,6 +180,7 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
                         const SizedBox(height: 5),
                         Text(
                           "Category: ${gift['category'] ?? 'N/A'}",
+                          key: Key('gift_category_$index'),
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.black54,
@@ -189,6 +189,7 @@ class _FriendsGiftListPageState extends State<FriendsGiftListPage> {
                         const SizedBox(height: 5),
                         Text(
                           "Status: ${gift['status'] ?? 'N/A'}",
+                          key: Key('gift_status_$index'),
                           style: TextStyle(
                             fontSize: 14,
                             color: borderColor,

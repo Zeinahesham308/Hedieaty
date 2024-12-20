@@ -22,7 +22,7 @@ class _EventCreationPageState extends State<EventCreationPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Event name and date are required!')),
       );
-     return;
+      return;
     }
 
     await _controller.createEvent(
@@ -47,13 +47,34 @@ class _EventCreationPageState extends State<EventCreationPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _buildInputField('Event Name', 'Enter event name', _nameController),
-              _buildInputField('Event Date', 'Enter date (YYYY-MM-DD)', _dateController),
-              _buildInputField('Location', 'Enter location', _locationController),
-              _buildInputField('Description', 'Enter description', _descriptionController),
+              _buildInputField(
+                'Event Name',
+                'Enter event name',
+                _nameController,
+                const Key('event_name_field'),
+              ),
+              _buildInputField(
+                'Event Date',
+                'Enter date (YYYY-MM-DD)',
+                _dateController,
+                const Key('event_date_field'),
+              ),
+              _buildInputField(
+                'Location',
+                'Enter location',
+                _locationController,
+                const Key('event_location_field'),
+              ),
+              _buildInputField(
+                'Description',
+                'Enter description',
+                _descriptionController,
+                const Key('event_description_field'),
+              ),
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
+                  key: const Key('create_event_action_button'), // Key for testing the Create Event button
                   onPressed: _createEvent,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2EC2D2),
@@ -77,10 +98,11 @@ class _EventCreationPageState extends State<EventCreationPage> {
     );
   }
 
-  Widget _buildInputField(String label, String hint, TextEditingController controller) {
+  Widget _buildInputField(String label, String hint, TextEditingController controller, Key key) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: TextField(
+        key: key, // Key for testing the input field
         controller: controller,
         decoration: InputDecoration(
           labelText: label,

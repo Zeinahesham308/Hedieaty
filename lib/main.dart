@@ -12,7 +12,7 @@ void main() async {
   myDatabaseClass database = myDatabaseClass();
 
   // Drop the database
-  await database.reseting();
+  //await database.reseting();
 
   // Reinitialize the database
   await database.mydbcheck(); // Ensure database is initialized

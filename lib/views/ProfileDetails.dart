@@ -112,34 +112,36 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
               const SizedBox(height: 20),
 
               // Email Field
+              // Email Field
               ProfileTextField(
                 label: 'Email',
                 controller: _emailController,
+                readOnly: true,
               ),
               const SizedBox(height: 20),
 
 
-              // Change Password Button
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              ChangePasswordScreen()), // Redirect to change password screen
-                    );
-                  },
-                  child: const Text(
-                    'Change Password >',
-                    style: TextStyle(
-                      color: Color(0xFF2EC2D2),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+              // // Change Password Button
+              // Align(
+              //   alignment: Alignment.centerLeft,
+              //   child: TextButton(
+              //     onPressed: () {
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //             builder: (context) =>
+              //                 ChangePasswordScreen()), // Redirect to change password screen
+              //       );
+              //     },
+              //     child: const Text(
+              //       'Change Password >',
+              //       style: TextStyle(
+              //         color: Color(0xFF2EC2D2),
+              //         fontWeight: FontWeight.bold,
+              //       ),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 30),
 
               // Save Button
@@ -176,11 +178,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 class ProfileTextField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
+  final bool readOnly;
 
   const ProfileTextField({
     Key? key,
     required this.label,
     required this.controller,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -212,6 +216,7 @@ class ProfileTextField extends StatelessWidget {
           ),
           child: TextFormField(
             controller: controller,
+            readOnly: readOnly,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.transparent,

@@ -9,7 +9,7 @@ class FriendGiftDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gift Details'),
+        title: const Text('Gift Details', key: Key('gift_details_title')),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -30,6 +30,7 @@ class FriendGiftDetailsPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Center(
           child: Card(
+            key: const Key('gift_details_card'),
             elevation: 8,
             margin: const EdgeInsets.all(16),
             shape: RoundedRectangleBorder(
@@ -42,6 +43,7 @@ class FriendGiftDetailsPage extends StatelessWidget {
                 children: [
                   // Gift Image (Placeholder)
                   ClipRRect(
+                    key: const Key('gift_image'),
                     borderRadius: BorderRadius.circular(15),
                     child: Image.asset(
                       'assets/images/default_gift.png', // Replace with dynamic image if available
@@ -55,6 +57,7 @@ class FriendGiftDetailsPage extends StatelessWidget {
                   // Gift Title
                   Text(
                     gift['name'] ?? 'No Name',
+                    key: const Key('gift_name'),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 26,
@@ -65,15 +68,36 @@ class FriendGiftDetailsPage extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   // Gift Details
-                  _buildDetailRow(Icons.category, 'Category', gift['category'] ?? 'N/A'),
-                  _buildDetailRow(Icons.description, 'Description', gift['description'] ?? 'No description'),
-                  _buildDetailRow(Icons.attach_money, 'Price', '\$${gift['price'] ?? 0.0}'),
-                  _buildDetailRow(Icons.check_circle, 'Status', gift['status'] ?? 'N/A'),
+                  _buildDetailRow(
+                    icon: Icons.category,
+                    label: 'Category',
+                    value: gift['category'] ?? 'N/A',
+                    key: 'gift_category',
+                  ),
+                  _buildDetailRow(
+                    icon: Icons.description,
+                    label: 'Description',
+                    value: gift['description'] ?? 'No description',
+                    key: 'gift_description',
+                  ),
+                  _buildDetailRow(
+                    icon: Icons.attach_money,
+                    label: 'Price',
+                    value: '\$${gift['price'] ?? 0.0}',
+                    key: 'gift_price',
+                  ),
+                  _buildDetailRow(
+                    icon: Icons.check_circle,
+                    label: 'Status',
+                    value: gift['status'] ?? 'N/A',
+                    key: 'gift_status',
+                  ),
 
                   const SizedBox(height: 20),
 
                   // Pledge Button
                   ElevatedButton.icon(
+                    key: const Key('pledge_gift_button'),
                     onPressed: () {
                       // Implement pledge logic here
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -103,10 +127,16 @@ class FriendGiftDetailsPage extends StatelessWidget {
   }
 
   /// Helper widget to display each detail row
-  Widget _buildDetailRow(IconData icon, String label, String value) {
+  Widget _buildDetailRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required String key,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
+        key: Key(key),
         children: [
           Icon(icon, color: Colors.black54, size: 24),
           const SizedBox(width: 10),

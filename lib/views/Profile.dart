@@ -4,6 +4,7 @@ import 'ProfileDetails.dart';
 import 'MyPledgedGifts.dart';
 import '../controllers/logout_controller.dart';
 import '../controllers/profile_controller.dart';
+import '../views/EventsList.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String userId;
@@ -91,15 +92,20 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
             ),
-            ProfileOption(
-              icon: Icons.notifications,
-              label: 'Notifications',
-              onTap: () {},
-            ),
+            // ProfileOption(
+            //   icon: Icons.notifications,
+            //   label: 'Notifications',
+            //   onTap: () {},
+            // ),
             ProfileOption(
               icon: Icons.event,
               label: 'My Events',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EventListPage(userId: userId)),
+                );
+              },
             ),
             ProfileOption(
               icon: Icons.card_giftcard,
